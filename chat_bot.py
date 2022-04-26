@@ -13,8 +13,8 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
-training = pd.read_csv('Training.csv')
-testing= pd.read_csv('Testing.csv')
+training = pd.read_csv('Data/Training.csv')
+testing= pd.read_csv('Data/Testing.csv')
 cols= training.columns
 cols= cols[:-1]
 x = training[cols]
@@ -85,7 +85,7 @@ def calc_condition(exp,days):
 
 def getDescription():
     global description_list
-    with open('symptom_Description.csv') as csv_file:
+    with open('MasterData/symptom_Description.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -97,7 +97,7 @@ def getDescription():
 
 def getSeverityDict():
     global severityDictionary
-    with open('symptom_severity.csv') as csv_file:
+    with open('MasterData/symptom_severity.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -111,7 +111,7 @@ def getSeverityDict():
 
 def getprecautionDict():
     global precautionDictionary
-    with open('symptom_precaution.csv') as csv_file:
+    with open('MasterData/symptom_precaution.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -121,10 +121,10 @@ def getprecautionDict():
 
 
 def getInfo():
-    # name=input("Name:")
-    print("Your Name \n\t\t\t\t\t\t",end="->")
+    print("-----------------------------------HealthCare ChatBot-----------------------------------")
+    print("\nYour Name? \t\t\t\t",end="->")
     name=input("")
-    print("hello ",name)
+    print("Hello, ",name)
 
 def check_pattern(dis_list,inp):
     import re
@@ -143,7 +143,7 @@ def check_pattern(dis_list,inp):
     else:
         return ptr,item
 def sec_predict(symptoms_exp):
-    df = pd.read_csv('Training.csv')
+    df = pd.read_csv('Data/Training.csv')
     X = df.iloc[:, :-1]
     y = df['prognosis']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=20)
@@ -164,13 +164,11 @@ def sec_predict(symptoms_exp):
 
 
 def print_disease(node):
-    #print(node)
     node = node[0]
-    #print(len(node))
     val  = node.nonzero() 
-    # print(val)
     disease = le.inverse_transform(val[0])
-    return disease
+    return list(map(lambda x:x.strip(),list(disease)))
+
 def tree_to_code(tree, feature_names):
     tree_ = tree.tree_
     # print(tree_)
@@ -182,11 +180,9 @@ def tree_to_code(tree, feature_names):
     chk_dis=",".join(feature_names).split(",")
     symptoms_present = []
 
-
-    # conf_inp=int()
     while True:
 
-        print("Enter the symptom you are experiencing  \n\t\t\t\t\t\t",end="->")
+        print("\nEnter the symptom you are experiencing  \t\t",end="->")
         disease_input = input("")
         conf,cnf_dis=check_pattern(chk_dis,disease_input)
         if conf==1:
@@ -257,7 +253,6 @@ def tree_to_code(tree, feature_names):
             calc_condition(symptoms_exp,num_days)
             if(present_disease[0]==second_prediction[0]):
                 print("You may have ", present_disease[0])
-
                 print(description_list[present_disease[0]])
 
                 # readn(f"You may have {present_disease[0]}")
@@ -283,4 +278,5 @@ getDescription()
 getprecautionDict()
 getInfo()
 tree_to_code(clf,cols)
+print("----------------------------------------------------------------------------------------")
 
