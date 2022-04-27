@@ -1,5 +1,4 @@
-
-
+import re
 import pandas as pd
 import pyttsx3
 from sklearn import preprocessing
@@ -127,21 +126,15 @@ def getInfo():
     print("Hello, ",name)
 
 def check_pattern(dis_list,inp):
-    import re
     pred_list=[]
-    ptr=0
-    patt = "^" + inp + "$"
-    regexp = re.compile(inp)
-    for item in dis_list:
-
-        # print(f"comparing {inp} to {item}")
-        if regexp.search(item):
-            pred_list.append(item)
-            # return 1,item
+    inp=inp.replace(' ','_')
+    patt = f"{inp}"
+    regexp = re.compile(patt)
+    pred_list=[item for item in dis_list if regexp.search(item)]
     if(len(pred_list)>0):
         return 1,pred_list
     else:
-        return ptr,item
+        return 0,[]
 def sec_predict(symptoms_exp):
     df = pd.read_csv('Data/Training.csv')
     X = df.iloc[:, :-1]
@@ -150,15 +143,10 @@ def sec_predict(symptoms_exp):
     rf_clf = DecisionTreeClassifier()
     rf_clf.fit(X_train, y_train)
 
-    symptoms_dict = {}
-
-    for index, symptom in enumerate(X):
-        symptoms_dict[symptom] = index
-
+    symptoms_dict = {symptom: index for index, symptom in enumerate(X)}
     input_vector = np.zeros(len(symptoms_dict))
     for item in symptoms_exp:
       input_vector[[symptoms_dict[item]]] = 1
-
 
     return rf_clf.predict([input_vector])
 
@@ -171,7 +159,6 @@ def print_disease(node):
 
 def tree_to_code(tree, feature_names):
     tree_ = tree.tree_
-    # print(tree_)
     feature_name = [
         feature_names[i] if i != _tree.TREE_UNDEFINED else "undefined!"
         for i in tree_.feature
@@ -209,7 +196,7 @@ def tree_to_code(tree, feature_names):
             num_days=int(input("Okay. From how many days ? : "))
             break
         except:
-            print("Enter number of days.")
+            print("Enter valid input.")
     def recurse(node, depth):
         indent = "  " * depth
         if tree_.feature[node] != _tree.TREE_UNDEFINED:
