@@ -1,5 +1,4 @@
-
-
+import re
 import pandas as pd
 import pyttsx3
 from sklearn import preprocessing
@@ -13,8 +12,8 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
-training = pd.read_csv('Training.csv')
-testing= pd.read_csv('Testing.csv')
+training = pd.read_csv('Data/Training.csv')
+testing= pd.read_csv('Data/Testing.csv')
 cols= training.columns
 cols= cols[:-1]
 x = training[cols]
@@ -85,7 +84,7 @@ def calc_condition(exp,days):
 
 def getDescription():
     global description_list
-    with open('symptom_Description.csv') as csv_file:
+    with open('MasterData/symptom_Description.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -97,7 +96,7 @@ def getDescription():
 
 def getSeverityDict():
     global severityDictionary
-    with open('symptom_severity.csv') as csv_file:
+    with open('MasterData/symptom_severity.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -111,7 +110,7 @@ def getSeverityDict():
 
 def getprecautionDict():
     global precautionDictionary
-    with open('symptom_precaution.csv') as csv_file:
+    with open('MasterData/symptom_precaution.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -121,59 +120,45 @@ def getprecautionDict():
 
 
 def getInfo():
-    # name=input("Name:")
-    print("Your Name \n\t\t\t\t\t\t",end="->")
+    print("-----------------------------------HealthCare ChatBot-----------------------------------")
+    print("\nYour Name? \t\t\t\t",end="->")
     name=input("")
-    print("hello ",name)
+    print("Hello, ",name)
 
 def check_pattern(dis_list,inp):
-    import re
     pred_list=[]
-    ptr=0
-    patt = "^" + inp + "$"
-    regexp = re.compile(inp)
-    for item in dis_list:
-
-        # print(f"comparing {inp} to {item}")
-        if regexp.search(item):
-            pred_list.append(item)
-            # return 1,item
+    inp=inp.replace(' ','_')
+    patt = f"{inp}"
+    regexp = re.compile(patt)
+    pred_list=[item for item in dis_list if regexp.search(item)]
     if(len(pred_list)>0):
         return 1,pred_list
     else:
-        return ptr,item
+        return 0,[]
 def sec_predict(symptoms_exp):
-    df = pd.read_csv('Training.csv')
+    df = pd.read_csv('Data/Training.csv')
     X = df.iloc[:, :-1]
     y = df['prognosis']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=20)
     rf_clf = DecisionTreeClassifier()
     rf_clf.fit(X_train, y_train)
 
-    symptoms_dict = {}
-
-    for index, symptom in enumerate(X):
-        symptoms_dict[symptom] = index
-
+    symptoms_dict = {symptom: index for index, symptom in enumerate(X)}
     input_vector = np.zeros(len(symptoms_dict))
     for item in symptoms_exp:
       input_vector[[symptoms_dict[item]]] = 1
-
 
     return rf_clf.predict([input_vector])
 
 
 def print_disease(node):
-    #print(node)
     node = node[0]
-    #print(len(node))
     val  = node.nonzero() 
-    # print(val)
     disease = le.inverse_transform(val[0])
-    return disease
+    return list(map(lambda x:x.strip(),list(disease)))
+
 def tree_to_code(tree, feature_names):
     tree_ = tree.tree_
-    # print(tree_)
     feature_name = [
         feature_names[i] if i != _tree.TREE_UNDEFINED else "undefined!"
         for i in tree_.feature
@@ -182,11 +167,9 @@ def tree_to_code(tree, feature_names):
     chk_dis=",".join(feature_names).split(",")
     symptoms_present = []
 
-
-    # conf_inp=int()
     while True:
 
-        print("Enter the symptom you are experiencing  \n\t\t\t\t\t\t",end="->")
+        print("\nEnter the symptom you are experiencing  \t\t",end="->")
         disease_input = input("")
         conf,cnf_dis=check_pattern(chk_dis,disease_input)
         if conf==1:
@@ -213,7 +196,7 @@ def tree_to_code(tree, feature_names):
             num_days=int(input("Okay. From how many days ? : "))
             break
         except:
-            print("Enter number of days.")
+            print("Enter valid input.")
     def recurse(node, depth):
         indent = "  " * depth
         if tree_.feature[node] != _tree.TREE_UNDEFINED:
@@ -257,7 +240,6 @@ def tree_to_code(tree, feature_names):
             calc_condition(symptoms_exp,num_days)
             if(present_disease[0]==second_prediction[0]):
                 print("You may have ", present_disease[0])
-
                 print(description_list[present_disease[0]])
 
                 # readn(f"You may have {present_disease[0]}")
@@ -283,4 +265,5 @@ getDescription()
 getprecautionDict()
 getInfo()
 tree_to_code(clf,cols)
+print("----------------------------------------------------------------------------------------")
 
