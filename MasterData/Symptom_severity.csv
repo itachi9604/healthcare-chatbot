@@ -15,7 +15,7 @@ spotting_urination,6
 fatigue,4
 weight_gain,3
 anxiety,4
-cold_hands_and_feets,5
+cold_hands_and_feet,5
 mood_swings,3
 weight_loss,3
 restlessness,5
@@ -38,7 +38,7 @@ pain_behind_the_eyes,4
 back_pain,3
 constipation,4
 abdominal_pain,4
-diarrhoea,6
+diarrhea,6
 mild_fever,5
 yellow_urine,4
 yellowing_of_eyes,4
@@ -71,7 +71,7 @@ swollen_blood_vessels,5
 puffy_face_and_eyes,5
 enlarged_thyroid,6
 brittle_nails,5
-swollen_extremeties,5
+swollen_extremities,5
 excessive_hunger,4
 extra_marital_contacts,5
 drying_and_tingling_lips,4
@@ -88,7 +88,7 @@ unsteadiness,4
 weakness_of_one_body_side,4
 loss_of_smell,3
 bladder_discomfort,4
-foul_smell_ofurine,5
+foul_smell_of_urine,5
 continuous_feel_of_urine,6
 passage_of_gases,5
 internal_itching,4
