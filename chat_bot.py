@@ -12,8 +12,8 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
-training = pd.read_csv('Data/Training.csv')
-testing= pd.read_csv('Data/Testing.csv')
+training = pd.read_csv('./Data/Training.csv')
+testing= pd.read_csv('./Data/Testing.csv')
 cols= training.columns
 cols= cols[:-1]
 x = training[cols]
@@ -84,7 +84,7 @@ def calc_condition(exp,days):
 
 def getDescription():
     global description_list
-    with open('MasterData/symptom_Description.csv') as csv_file:
+    with open('./MasterData/symptom_Description.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -96,7 +96,7 @@ def getDescription():
 
 def getSeverityDict():
     global severityDictionary
-    with open('MasterData/symptom_severity.csv') as csv_file:
+    with open('./MasterData/Symptom_severity.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -110,7 +110,7 @@ def getSeverityDict():
 
 def getprecautionDict():
     global precautionDictionary
-    with open('MasterData/symptom_precaution.csv') as csv_file:
+    with open('./MasterData/symptom_precaution.csv') as csv_file:
 
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -123,6 +123,18 @@ def getInfo():
     print("-----------------------------------HealthCare ChatBot-----------------------------------")
     print("\nYour Name? \t\t\t\t",end="->")
     name=input("")
+    print("\nYour Age? \t\t\t\t",end="->")
+    age=int(input(""))
+    while True:
+        gender = input("Please enter your gender (male/female/other): ").lower()  # Convert input to lowercase for case-insensitivity
+
+        if gender in ['male', 'female', 'other']:
+            break  # Exit the loop if the input is valid
+        else:
+            print("Invalid input. Please enter 'male', 'female', or 'other'.")
+
+    print("Your gender is:",gender)
+
     print("Hello, ",name)
 
 def check_pattern(dis_list,inp):
@@ -136,7 +148,7 @@ def check_pattern(dis_list,inp):
     else:
         return 0,[]
 def sec_predict(symptoms_exp):
-    df = pd.read_csv('Data/Training.csv')
+    df = pd.read_csv('./Data/Training.csv')
     X = df.iloc[:, :-1]
     y = df['prognosis']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=20)
